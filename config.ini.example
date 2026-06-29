@@ -1,0 +1,21 @@
+[program]
+# First day of Week 1 (Monday). Used to calculate the current week automatically.
+start_date = 2025-06-02
+
+# Display name used in emails and reports
+name = DREU 2025
+
+[github]
+# Personal access token — only needed if student repos are private.
+# Leave blank for public repos.
+token =
+
+[smtp]
+# SMTP settings for sending email notifications.
+# Example below uses Gmail with an App Password (recommended over your main password).
+# To create a Gmail App Password: myaccount.google.com → Security → App passwords
+host     = smtp.gmail.com
+port     = 587
+username = your_gmail_address@gmail.com
+password = your_app_password_here
+sender   = DREU Program <dreu_staff@cra.org>

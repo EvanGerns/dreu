@@ -1,0 +1,22 @@
+# Ignore everything by default
+*
+
+# Explicitly allow the journal template files
+!.gitignore
+!README.md
+!TEMPLATE.md
+!TEMPLATE_GDOC.md
+!EXAMPLE.md
+!check_log.py
+!check_all.py
+!config.ini.example
+!students.csv
+
+# Allow the logs folder and its contents
+!logs/
+!logs/**
+
+# Allow the GitHub Actions workflow
+!.github/
+!.github/workflows/
+!.github/workflows/validate-log.yml

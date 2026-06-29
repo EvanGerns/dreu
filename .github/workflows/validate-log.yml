@@ -1,0 +1,69 @@
+name: Validate Research Log
+
+# Runs whenever you push changes to any weekly log file.
+# Also available under Actions → "Run workflow" to trigger manually.
+
+on:
+  push:
+    paths:
+      - "logs/week-*.md"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Check log format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate logs
+        run: |
+          python - << 'PYEOF'
+          import glob, re, subprocess, sys
+
+          PLACEHOLDER = re.compile(r"YYYY-MM-DD")
+
+          # Collect all week files that have been started
+          # (i.e., the dates placeholder has been replaced)
+          started = []
+          skipped = []
+          for path in sorted(glob.glob("logs/week-*.md")):
+              content = open(path, encoding="utf-8").read()
+              if PLACEHOLDER.search(content):
+                  skipped.append(path)
+              else:
+                  started.append(path)
+
+          if skipped:
+              print(f"Skipping {len(skipped)} not-yet-started file(s): "
+                    + ", ".join(skipped))
+              print()
+
+          if not started:
+              print("No log files have been started yet — nothing to validate.")
+              sys.exit(0)
+
+          print(f"Validating {len(started)} log file(s) ...\n")
+
+          failed = False
+          for path in started:
+              result = subprocess.run(
+                  ["python", "check_log.py", path],
+                  capture_output=False,
+              )
+              if result.returncode != 0:
+                  failed = True
+
+          if failed:
+              print("\nOne or more logs have format issues — see above.")
+              sys.exit(1)
+          else:
+              print("\nAll logs passed validation ✓")
+          PYEOF
